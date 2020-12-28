@@ -19,5 +19,19 @@ namespace RemoteCamp.Portal.Web.Core.Security
                 signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
+
+        public string Refresh(string token)
+        {
+            var jToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            var now = DateTime.UtcNow;
+            var jwt = new JwtSecurityToken(
+                issuer: AuthOptions.ISSUER,
+                //audience: AuthOptions.AUDIENCE,
+                notBefore: now,
+                claims: jToken.Claims,
+                expires: now.Add(AuthOptions.TokenLifeTime),
+                signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
+        }
     }
 }
